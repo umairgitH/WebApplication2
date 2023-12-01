@@ -1,0 +1,92 @@
+﻿
+@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="~/Content/registerStyle.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h1>Sign Up</h1>
+            <form method="POST">
+                <div class="input-group">
+                    <div class="input-field">
+                        <input type="text" id="firstname" placeholder="FirstName" />
+                    </div>
+                    <div class="input-field">
+                        <input type="text" id="lastname" placeholder="LastName" />
+                    </div>
+                    <div class="input-field">
+                        <input type="text" id="phone" placeholder="Phone Number" />
+                    </div>
+                    <div class="input-field">
+                        <input type="email" id="email" placeholder="Email" />
+                    </div>
+                    <div class="input-field">
+                        <input type="password" id="password" placeholder="Password" />
+                    </div>
+                    <div class="input-field">
+                        <input type="text" id="managerName" placeholder="Manager Name" />
+                    </div>
+                    <div class="input-field">
+                        <input type="text" id="role" placeholder="Role" />
+                    </div>
+                    <div class="btn-field">
+                        <input type="button" value="Sign up" onclick="registerUser()" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+
+</script>
+
+<script>
+    function registerUser() {
+        var user = {
+            firstName: document.getElementById('firstname').value,
+            LastName: document.getElementById('lastname').value,
+            PhoneNum: document.getElementById('phone').value,
+            Email: document.getElementById('email').value,
+            Password: document.getElementById('password').value,
+            ManagerName: document.getElementById('managerName').value,
+            Role: document.getElementById('role').value
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '/Account/Register',
+            //contentType: 'application/json',
+            data: user,
+            success: function (result) {
+                console.log(result);
+                if (result.result == "Success") {
+                    console.log("Registering user...");
+                    window.location.href = '/Account/Login';
+                }
+                //window.location.href = 'AccountController/Login';
+                else {
+                    console.log("Registration Failed");
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+
+</script>
+
+
