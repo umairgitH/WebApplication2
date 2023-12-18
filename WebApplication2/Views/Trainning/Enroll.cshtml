@@ -1,0 +1,40 @@
+﻿
+@{
+    Layout = null;
+    //@Model EmployeeTrainningClassLibrary.Model;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="~/Content/EnrollStyle3.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <title>Enroll</title>
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h1>Enroll to Trainning</h1>
+            <form method="post" enctype="multipart/form-data" action="@Url.Action("Enroll","Trainning")">
+                <div class="input-group">
+
+                    <input type="hidden" id="TrainingId" name="TrainingId" value="@Model.TrainingId" />
+                    <div class="input-field">
+                        <label>TrainningId: @Model.TrainingId</label>
+                        <label>Trainning Name: @Model.TrainingName</label>
+                        <input type="file" id="requisite" name="file" placeholder="Pre-requisite" />
+                    </div>
+                    <div class="btn-field">
+                        <input type="button" class="back-button" value="Back" onclick="window.location.href='/Trainning/Trainning'" />
+                        <input type="submit" class="enroll-button" value="Upload" />
+                    </div>
+                </div>
+                <div class="message-status">
+                    <h2>@ViewBag.Message</h2>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

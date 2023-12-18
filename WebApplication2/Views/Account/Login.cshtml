@@ -9,62 +9,102 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="~/Content/LoginStyle.css" />
+    <link rel="stylesheet" href="~/Content/LoginStyle3.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        .errorMessage{
+            display : none;
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <div class="form-box">
             <h1>Sign In</h1>
-            <form>
+            <form method="POST">
                 <div class="input-group">
                     <div class="input-field">
+                        <label for="email">Email</label>
                         <input type="email" id="email" placeholder="Email" />
                     </div>
+                    <div id="emailError" class="errorMessage"></div>
                     <div class="input-field">
+                        <label for="password">Password</label>
                         <input type="password" id="password" placeholder="Password" />
                     </div>
-                    <p>Lost Password <a href="#">Click Here</a></p>
+                    <div id="passwordError" class="errorMessage"></div>
                     <div class="btn-field">
-                        <input type="button" value="Sign up" onclick="register()" />
-                        <input type="button" value="Sign in" />
+                        <input type="button" value="Sign in" onclick="login()" />
                     </div>
+                    <div class="link-forgot">
+                        <p class="fogot-password">Forgot Password <a href="#">Click Here</a></p>
+                    </div>
+                    <div class="link-signup">
+                        <p class="sign-up">Don't have an account? <a href='/Account/Register'>SignUp</a></p>
+                    </div>
+                    <div id="generalError" class="errorMessage"></div>
                 </div>
+                
             </form>
         </div>
     </div>
 </body>
 </html>
 <script>
-    function register() {
-        window.location.href = '/Account/Register';
-    }
-
     function login() {
         var user = {
             Email: document.getElementById('email').value,
             Password: document.getElementById('password').value
         }
+        var account;
+        if (user.Email == "" && user.Password == "") {
+            displayError('emailError', 'Email is required');
+            displayError('passwordError', 'Password is required');
+        }
+        else if (user.Email == "") {
+            displayError('emailError', 'Email is required');
+            document.getElementById("passwordError").style.display = "none";
+        }
+        else if (user.Password == "") {
+            displayError('passwordError', 'Password is required');
+            document.getElementById("emailError").style.display = "none";
+        }
+        else {
 
-        $ajax({
-            type: 'POST',
-            url: '/Account/Login',
-            data: user,
-            success: function (result) {
-                console.log(result);
-                if (result.result == "Success") {
-                    console.log("Logging User....");
-                    window.location.href = '/Home/Index';
-                }
-                //window.location.href = 'AccountController/Login';
-                else {
-                    console.log("Registration Failed");
-                }
-            },
-            error: function (error) {
-                console.log(error);
-            }
+            $.ajax({
+                type: 'POST',
+                url: '/Account/Login',
+                data: user,
+                success: function (result) {
+                    if (result.result == "Success") {
+                        console.log("Logging User....");
+                        window.location.href = '/Trainning/Trainning';
+                    }
+                    else {
+                        document.getElementById("emailError").style.display = "none";
+                        document.getElementById("passwordError").style.display = "none";
 
-        });
+                        document.getElementById("generalError").style.display = "flex";
+                        document.getElementById('generalError').style.flexDirection = "column";
+                        document.getElementById('generalError').style.justifyContent = "center";
+                        document.getElementById('generalError').style.paddingTop = "5px";
+                        document.getElementById("generalError").innerHTML = "Wrong credentials. Please do check your credentials before signing in.";
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+        
+    }
+    function displayError(elementId, errorMessage) {
+        var errorElement = document.getElementById(elementId);
+        errorElement.style.display = "flex";
+        errorElement.style.flexDirection = "column";
+        errorElement.style.textAlign = "left";
+        errorElement.style.paddingBottom = "15px";
+        errorElement.innerHTML = errorMessage;
     }
 </script>
-

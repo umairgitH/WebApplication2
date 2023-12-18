@@ -2,9 +2,8 @@ using System.Web.Mvc;
 using Unity;
 using Unity.Injection;
 using Unity.Mvc5;
-using WebApplication2.BL;
-using WebApplication2.Controllers;
-using WebApplication2.DAL;
+using EmployeeTrainningClassLibrary.BusinessLayer;
+using EmployeeTrainningClassLibrary.DAL;
 
 namespace WebApplication2
 {
@@ -19,11 +18,13 @@ namespace WebApplication2
 
             // e.g. container.RegisterType<ITestService, TestService>();
             container.RegisterType<IDataAccessLayer, DataAccessLayer>();
-            container.RegisterType<IuserLoginDAL, UserDAL>();
-            container.RegisterType<IEmployeeDAL, EmployeeDAL>();
-            container.RegisterType<IManagerDAL, ManagerDAL>();
-            container.RegisterType<IAdminDAL, AdminDAL>();
-            container.RegisterType<IEmployeeService, EmployeeService>();
+            container.RegisterType<IRetrieveUserForAuthenticationDAL, RetrieveUserForAuthenticationDAL>();
+            container.RegisterType<IUserDAL, UserDAL>();
+            container.RegisterType<IUserService, UserService>();
+            container.RegisterType<ITrainningService, TrainningService>();
+            container.RegisterType<ITrainningDAL, TrainningDAL>();
+            container.RegisterType<IEnrollmentDAL, EnrollmentDAL>();
+            container.RegisterType<IEnrollmentService, EnrollmentService>();
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
         }
     }

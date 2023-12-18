@@ -1,0 +1,41 @@
+﻿@{
+    Layout = null;
+}
+@model List<EmployeeTrainningClassLibrary.Models.FileStorage>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>File List</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+    <h2>List of Files</h2>
+
+    @if (Model != null && Model.Any())
+    {
+        <ul>
+            @foreach (var file in Model)
+            {
+                <li>
+                    @file.FileName
+                    @file.FileId
+                    <form method="get" enctype="multipart/form-data" action="@Url.Action("Download", "Trainning")">
+                        <input type="hidden" name="fileId" value="@file.FileId" />
+                        <button type="submit">Download</button>
+                    </form>
+                    @*@file.FileName
+                    @file.FileId
+                    <a href="@Url.Action("Download", "Trainning", new { fileId = file.FileId })">Download</a>*@
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No files available.</p>
+    }
+</body>
+</html>
+

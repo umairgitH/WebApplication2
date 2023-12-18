@@ -1,0 +1,43 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <script>
+      var dojoConfig = {
+        async: true,
+        waitSeconds: 0,
+        packages: [
+          { name: "dojo", location: "/dojoSRC/dojo" },
+          { name: "dijit", location: "/dojoSRC/dijit" },
+          { name: "themes", location: "/dojoSRC/dijit-themes" },
+          { name: "template", location: "/Widget" },
+        ],
+      };
+    </script>
+    <script src="/dojoSRC/dojo/dojo.js"></script>
+    <script>
+      require([
+        "dijit/registry",
+        "dojo/parser",
+        "dojo/dom",
+        "dojo/dom-style",
+        "dojo/domReady!",
+      ], function (registry, parser, dom, domStyle) {
+        parser.parse();
+
+        var containerNode = dom.byId("containerNode");
+        domStyle.set(containerNode,{
+            width: "100px",
+            height: "200px",
+            backgroundColor: "red"
+        })
+      });
+    </script>
+  </head>
+  <body>
+    <div id="containerNode"></div>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <script>
+      var dojoConfig = {
+        async: true,
+        waitSeconds: 0,
+        packages: [
+          { name: "dojo", location: "/dojoSRC/dojo" },
+          { name: "dijit", location: "/dojoSRC/dijit" },
+          { name: "themes", location: "/dojoSRC/dijit-themes" },
+          { name: "template", location: "/Widget" },
+        ],
+      };
+    </script>
+    <script src="/dojoSRC/dojo/dojo.js"></script>
+    <script>
+      require([
+        "dojo/parser",
+        "dojo/dom",
+        "dojo/dom-construct",
+        "dijit/form/TextBox",
+        "dojo/domReady!",
+      ], function (parser, dom, domConstruct, TextBox) {
+        parser.parse();
+
+        var containerNode = dom.byId("containerNode");
+
+        //create a span to display a text
+        domConstruct.create(
+          "span",
+          { innerHTML: "Enter your name" },
+          containerNode
+        );
+
+        //create a textbox
+        var textBox = new TextBox();
+        textBox.startup();
+
+        domConstruct.place(textBox.domNode, containerNode, "last");
+        //domConstruct.place(textBox.domNode, containerNode, "first");
+
+        textBox.set("value", "I was added by domConstruct");
+      });
+    </script>
+  </head>
+  <body>
+    <div id="containerNode"></div>
+  </body>
+</html>

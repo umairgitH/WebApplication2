@@ -10,8 +10,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="~/Content/registerStyle.css" />
+    <link rel="stylesheet" href="~/Content/RegisterStyle2.css" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        .errorMessage {
+            display: none;
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -20,25 +26,29 @@
             <form method="POST">
                 <div class="input-group">
                     <div class="input-field">
+                        <label for="firstname">First Name</label>
                         <input type="text" id="firstname" placeholder="FirstName" />
                     </div>
                     <div class="input-field">
+                        <label for="lastname">Last Name</label>
                         <input type="text" id="lastname" placeholder="LastName" />
                     </div>
                     <div class="input-field">
+                        <label for="phone">Phone Number</label>
                         <input type="text" id="phone" placeholder="Phone Number" />
                     </div>
                     <div class="input-field">
+                        <label for="email">Email</label>
                         <input type="email" id="email" placeholder="Email" />
                     </div>
+                    <div id="emailError" class="errorMessage"></div>
                     <div class="input-field">
+                        <label for="password">Password</label>
                         <input type="password" id="password" placeholder="Password" />
                     </div>
                     <div class="input-field">
+                        <label for="managerName">Manager Name</label>
                         <input type="text" id="managerName" placeholder="Manager Name" />
-                    </div>
-                    <div class="input-field">
-                        <input type="text" id="role" placeholder="Role" />
                     </div>
                     <div class="btn-field">
                         <input type="button" value="Sign up" onclick="registerUser()" />
@@ -52,9 +62,9 @@
 <script>
 
 </script>
-
 <script>
     function registerUser() {
+        const fname = document.getElementById('firstname').value
         var user = {
             firstName: document.getElementById('firstname').value,
             LastName: document.getElementById('lastname').value,
@@ -62,13 +72,10 @@
             Email: document.getElementById('email').value,
             Password: document.getElementById('password').value,
             ManagerName: document.getElementById('managerName').value,
-            Role: document.getElementById('role').value
         };
-
         $.ajax({
             type: 'POST',
             url: '/Account/Register',
-            //contentType: 'application/json',
             data: user,
             success: function (result) {
                 console.log(result);
@@ -76,17 +83,31 @@
                     console.log("Registering user...");
                     window.location.href = '/Account/Login';
                 }
-                //window.location.href = 'AccountController/Login';
                 else {
                     console.log("Registration Failed");
+                    if (result.errors) {
+                        result.errors.forEach(function (error) {
+                            if (error == "emailNotUnique") {
+                                console.log("email should be unique");
+                                displayError('emailError', 'Email already taken! Enter a unique email.');
+                            }
+                        });
+                    }
                 }
             },
             error: function (error) {
                 console.log(error);
             }
-        });
+        }); 
     }
-
+    function displayError(elementId, errorMessage) {
+        var errorElement = document.getElementById(elementId);
+        errorElement.style.display = "flex";
+        errorElement.style.flexDirection = "column";
+        errorElement.style.textAlign = "left";
+        errorElement.style.paddingBottom = "15px";
+        errorElement.innerHTML = errorMessage;
+    }
 </script>
 
 

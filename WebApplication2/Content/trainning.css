@@ -1,0 +1,84 @@
+﻿body {
+    background-color: #eaeaea;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.User-container {
+    background-color: white;
+    width: 95%;
+    height: 80px;
+    margin: 0 auto;
+    min-height: 100px;
+    min-width: 320px;
+    display: flex;
+    align-items: center;
+}
+
+.img-logo {
+    margin-left: 2%;
+    margin-right: 2%;
+    width: 5%;
+    height: auto;
+}
+
+.user-name {
+    flex: 1;
+    text-align: center;
+}
+
+.log-out-button {
+    width: 7%;
+    border-radius: 5px;
+    border: #1e90ff;
+    height: 30px;
+    margin-left: 2%;
+    margin-right: 2%;
+    background-color: #1e90ff;
+    color: white;
+}
+
+.Trainning-list {
+    background-color: white;
+    box-shadow: 10px 10px 5px lightblue;
+    width: 94%;
+    margin: 25px auto;
+    padding: 10px;
+    min-width: 320px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.enroll-button {
+    width: 90px;
+    border-radius: 5px;
+    border: #1e90ff;
+    margin-right: 2%;
+    height: 30px;
+    background-color: #1e90ff;
+    color: white;
+}
+
+.info-column {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.name {
+    line-height: 1.5em;
+    font-size: large;
+    margin-left: 2%;
+    margin-right: 3%;
+}
+
+.description {
+    margin-right: 6%;
+    line-height: 1.5em;
+    font-size: large;
+}

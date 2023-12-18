@@ -1,0 +1,50 @@
+﻿
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="~/Content/trainning.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <title>Trainning</title>
+</head>
+<body>
+    <div class="container">
+        <div class="User-container">
+            <img src="~/Content/logo.png" alt="logo" class="img-logo" />
+            <h2 class="user-name">Welcome!<br />Enroll to your desired trainning</h2>
+            <button class="log-out-button" onclick="window.location.href='/Account/LogOut'">Log Out</button>
+        </div>
+        @model List<EmployeeTrainningClassLibrary.Models.Trainning>
+        @foreach (var trainning in Model)
+        {
+            <div class="Trainning-list">
+                <div class="info-column">
+                    <p class="name" data-value="@trainning.TrainingName">@trainning.TrainingName</p>
+                    <p class="description">@trainning.Description</p>
+                </div>
+
+                <button class="enroll-button" name="@trainning.TrainingId">Enroll</button>
+            </div>
+        }
+    </div>
+</body>
+</html>
+<script>
+    function encodeStringURIComponent(str) {
+        return encodeURIComponent(str).replace(
+            /./g,
+            (c) => `${c.charCodeAt(0).toString(16).toUpperCase()}`,
+        );
+    }
+    $(document).ready(function () {
+        $('.enroll-button').on('click', function () {
+            var trainingId = $(this).attr('name');
+            var trainingName = $(this).closest('.Trainning-list').find('.name').data('value');
+            window.location.href = '@Url.Action("Enroll","Trainning")?trainingId=' + trainingId + '&trainningName=' + encodeStringURIComponent(trainingName);
+        });
+    });
+</script>
