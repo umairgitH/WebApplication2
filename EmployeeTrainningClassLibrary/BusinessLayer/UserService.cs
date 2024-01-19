@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace EmployeeTrainningClassLibrary.BusinessLayer
@@ -17,31 +18,31 @@ namespace EmployeeTrainningClassLibrary.BusinessLayer
 
             _employeeDAL = employeeDAL;
         }
-        //Tuple Literals to Return Multiple Values
-        public (bool isAuthenticated, int UserId, int RoleId) IsUserExists(User user)
+        //Tuple Literals 
+        public async Task <(bool isAuthenticated, int UserId, int RoleId)> IsUserExistsAsync(LoginModel user)
         {
-            using(SqlDataReader reader = _employeeDAL.RetrieveUser(user))
+            (bool isAuthenticated, int UserId, int RoleId) = await _employeeDAL.RetrieveUserAsync(user);
+            if (isAuthenticated)
             {
-                if (reader.HasRows)
-                {
-                    reader.Read();
-                    int UserId = Convert.ToInt32(reader["UserId"]);
-                    int RoleId = Convert.ToInt32(reader["RoleId"]);
-                    return (isAuthenticated: true, UserId, RoleId);
-                }
-                else
-                {
-                    return (isAuthenticated: false, UserId: 0, RoleId: 0);
-                }
+                return (isAuthenticated: true, UserId, RoleId);
+            }
+            else
+            {
+                return (isAuthenticated: false, UserId: 0, RoleId: 0);
             }
         }
-        public bool IsEmployeeRegistered(User user)
+        public async Task <(bool, List<string>)> IsEmployeeRegisteredAsync(User user)
         {
-            return _employeeDAL.IsEmployeeRegistered(user);      
+            user.Password = GetHashedPassword(user.Password);
+            return await _employeeDAL.IsEmployeeRegisteredAsync(user);
         }
-        public bool IsEmailUnique(string email)
+        public List<string> ListOfManagerName()
         {
-           return _employeeDAL.CheckEmailExistance(email);
+            return _employeeDAL.ListOfManagerName();
+        }
+        private string GetHashedPassword(string password)
+        {
+            return BCrypt.Net.BCrypt.EnhancedHashPassword(password, 11);
         }
     }
 }

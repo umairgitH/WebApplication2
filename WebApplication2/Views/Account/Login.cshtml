@@ -2,7 +2,7 @@
 @{
     Layout = null;
 }
-
+@model EmployeeTrainningClassLibrary.Models.LoginModel
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,9 +11,12 @@
     <title>Document</title>
     <link rel="stylesheet" href="~/Content/LoginStyle3.css" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <style>
-        .errorMessage{
-            display : none;
+        .errorMessage {
+            display: none;
             color: red;
         }
     </style>
@@ -22,20 +25,20 @@
     <div class="container">
         <div class="form-box">
             <h1>Sign In</h1>
-            <form method="POST">
+            <form method="POST" id="loginForm">
                 <div class="input-group">
                     <div class="input-field">
                         <label for="email">Email</label>
-                        <input type="email" id="email" placeholder="Email" />
+                        <input type="email" id="email" name="Email" placeholder="Email" />
                     </div>
-                    <div id="emailError" class="errorMessage"></div>
+                    <div id="EmailError" class="errorMessage"></div>
                     <div class="input-field">
                         <label for="password">Password</label>
-                        <input type="password" id="password" placeholder="Password" />
+                        <input type="password" id="password" name="Password" placeholder="Password" />
                     </div>
-                    <div id="passwordError" class="errorMessage"></div>
+                    <div id="PasswordError" class="errorMessage"></div>
                     <div class="btn-field">
-                        <input type="button" value="Sign in" onclick="login()" />
+                        <input type="button" value="Sign in" onclick="login()"/>
                     </div>
                     <div class="link-forgot">
                         <p class="fogot-password">Forgot Password <a href="#">Click Here</a></p>
@@ -45,7 +48,7 @@
                     </div>
                     <div id="generalError" class="errorMessage"></div>
                 </div>
-                
+
             </form>
         </div>
     </div>
@@ -59,16 +62,16 @@
         }
         var account;
         if (user.Email == "" && user.Password == "") {
-            displayError('emailError', 'Email is required');
-            displayError('passwordError', 'Password is required');
+            displayError('EmailError', 'Email is required');
+            displayError('PasswordError', 'Password is required');
         }
         else if (user.Email == "") {
-            displayError('emailError', 'Email is required');
-            document.getElementById("passwordError").style.display = "none";
+            displayError('EmailError', 'Email is required');
+            document.getElementById("PasswordError").style.display = "none";
         }
         else if (user.Password == "") {
-            displayError('passwordError', 'Password is required');
-            document.getElementById("emailError").style.display = "none";
+            displayError('PasswordError', 'Password is required');
+            document.getElementById("EmailError").style.display = "none";
         }
         else {
 
@@ -78,12 +81,17 @@
                 data: user,
                 success: function (result) {
                     if (result.result == "Success") {
-                        console.log("Logging User....");
-                        window.location.href = '/Trainning/Trainning';
+                        toastr.success("Login Successfully", "Success", { timeOut: 3000, positionClass: "toast-top-right", });
+
+                        setTimeout(function () {
+                            var controller = result.controller;
+                            var action = result.action;
+                            window.location.href = '/' + controller + '/' + action;
+                        }, 4000);
                     }
-                    else {
-                        document.getElementById("emailError").style.display = "none";
-                        document.getElementById("passwordError").style.display = "none";
+                    else if (result.result == "Login failed") {
+                        document.getElementById("EmailError").style.display = "none";
+                        document.getElementById("PasswordError").style.display = "none";
 
                         document.getElementById("generalError").style.display = "flex";
                         document.getElementById('generalError').style.flexDirection = "column";
@@ -91,14 +99,26 @@
                         document.getElementById('generalError').style.paddingTop = "5px";
                         document.getElementById("generalError").innerHTML = "Wrong credentials. Please do check your credentials before signing in.";
                     }
+                    //for server side validation to display the error.
+                    else {
+                        document.getElementById("EmailError").style.display = "none";
+                        document.getElementById("PasswordError").style.display = "none";
+
+                        if (result.errors) {
+                            Object.keys(result.errors).forEach(function (attributeName) {
+                                displayError(attributeName + "Error", result.errors[attributeName]);
+                            });
+                        }
+                    }
                 },
                 error: function (error) {
-                    console.log(error);
+                    window.location.href = '/Error/Error500';
                 }
             });
         }
-        
+
     }
+
     function displayError(elementId, errorMessage) {
         var errorElement = document.getElementById(elementId);
         errorElement.style.display = "flex";

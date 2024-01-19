@@ -46,12 +46,25 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BCrypt.Net-Next, Version=4.0.3.0, Culture=neutral, PublicKeyToken=1e11be04b6288443, processorArchitecture=MSIL">
+      <HintPath>..\packages\BCrypt.Net-Next.4.0.3\lib\net472\BCrypt.Net-Next.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -135,9 +148,11 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\DojoController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ManagerController.cs" />
     <Compile Include="Controllers\TrainningController.cs" />
     <Compile Include="Enums\RoleEnum.cs" />
     <Compile Include="Global.asax.cs">
@@ -145,8 +160,13 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Roles\CustomAuthorizationAttribute.cs" />
+    <Compile Include="SessionManagement\SessionTimeOutAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\AdminDashboard.css" />
+    <Content Include="Content\AdminHome.css" />
+    <Content Include="Content\AdminStyle.css" />
+    <Content Include="Content\AdminStyle2.css" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -163,18 +183,24 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\DisplayEnrollmentStyle.css" />
+    <Content Include="Content\DisplayManagerStyle.css" />
     <Content Include="Content\EnrollStyle.css" />
     <Content Include="Content\EnrollStyle2.css" />
     <Content Include="Content\EnrollStyle3.css" />
     <Content Include="Content\LoginStyle.css" />
     <Content Include="Content\LoginStyle2.css" />
     <Content Include="Content\LoginStyle3.css" />
-    <Content Include="Content\logo.png" />
+    <Content Include="Content\Images\logo.png" />
     <Content Include="Content\registerStyle.css" />
     <Content Include="Content\RegisterStyle2.css" />
     <Content Include="Content\Images\trainingbg.jpg" />
     <Content Include="Content\Images\trainingbg2.jpg" />
+    <Content Include="Content\RegisterStyle3.css" />
+    <Content Include="Content\RegisterStyle31.css" />
+    <Content Include="Content\SelectTrainning.css" />
     <Content Include="Content\trainning.css" />
+    <Content Include="Content\ValidateRegister.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -12134,6 +12160,13 @@
     <Content Include="StaticView\Login.cshtml" />
     <Content Include="Views\Dojo\Login.cshtml" />
     <Content Include="Views\Trainning\DiplayFileList.cshtml" />
+    <Content Include="Views\Manager\SelectTrainning.cshtml" />
+    <Content Include="Views\Manager\DisplayTrainning.cshtml" />
+    <Content Include="Views\Error\Error404.cshtml" />
+    <Content Include="Views\Error\Error500.cshtml" />
+    <Content Include="Views\Admin\AdminDashBoard.cshtml" />
+    <Content Include="Views\Admin\DisplayEnrollment.cshtml" />
+    <Content Include="Views\Error\DefaultError.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

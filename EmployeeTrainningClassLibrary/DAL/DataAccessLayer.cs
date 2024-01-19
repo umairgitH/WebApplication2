@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Reflection;
 using EmployeeTrainningClassLibrary.Enum;
+using System.Threading.Tasks;
 
 namespace EmployeeTrainningClassLibrary.DAL
 
@@ -50,29 +51,47 @@ namespace EmployeeTrainningClassLibrary.DAL
         }
         public SqlDataReader GetAllData(string sql)
         {
-            using (SqlCommand cmd = new SqlCommand(sql, Connection))
+            try
             {
-                return cmd.ExecuteReader();
+                using (SqlCommand cmd = new SqlCommand(sql, Connection))
+                {
+                    return cmd.ExecuteReader();
+                }
             }
-        }
-        public SqlDataReader GetData(string sql, List<SqlParameter> parameters)
-        {
-            using (SqlCommand cmd = new SqlCommand(sql, Connection))
+            catch
             {
-                cmd.Parameters.AddRange(parameters.ToArray());
-                return cmd.ExecuteReader();
+                throw;
+            }  
+        }
+        public async Task <SqlDataReader> GetData(string sql, List<SqlParameter> parameters)
+        {
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(sql, Connection))
+                {
+                    cmd.Parameters.AddRange(parameters.ToArray());
+                    return await cmd.ExecuteReaderAsync();
+                }
+            }
+            catch 
+            {
+                throw;
             }
         }
         public void ExecuteNonQueryData(string sql, List<SqlParameter> parameters)
         {
-            using (SqlCommand cmd = new SqlCommand(sql, Connection))
+            try
             {
-                if (parameters != null && parameters.Count > 0)
+                using (SqlCommand cmd = new SqlCommand(sql, Connection))
                 {
-                    cmd.Parameters.AddRange(parameters.ToArray());
+                    if (parameters != null && parameters.Count > 0)
+                    {
+                        cmd.Parameters.AddRange(parameters.ToArray());
+                    }
+                    cmd.ExecuteNonQuery();
                 }
-                cmd.ExecuteNonQuery();
             }
+            catch { throw; }
         }
         public void ExecuteNonQueryUsingProcedures(string procedureName, List<SqlParameter> parameters)
         {

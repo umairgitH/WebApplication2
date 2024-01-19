@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EmployeeTrainningClassLibrary.AppLoger;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,10 +11,11 @@ namespace WebApplication2
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        private ILogger _logger;
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
-            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            //FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             UnityConfig.RegisterComponents();
@@ -22,6 +24,12 @@ namespace WebApplication2
         {
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
             Response.Cache.SetNoStore();
+        }
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            Exception ex = Server.GetLastError();
+            _logger = new Logger("LogFile.txt");
+            _logger.Log(ex);
         }
     }
 }

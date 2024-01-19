@@ -8,10 +8,22 @@ namespace WebApplication2.Controllers
 {
     public class ErrorController : Controller
     {
-        // GET: Error
         public ActionResult AccessDenied()
         {
             ViewBag.Message = " Access Denied";
+            return View();
+        }
+        public ActionResult Error404()
+        {
+            return View();
+        }
+        public ActionResult Error500(string errorMsg)
+        {
+            ViewBag.Exception = errorMsg;
+            return View();
+        }
+        public ActionResult DefaultError()
+        {
             return View();
         }
     }

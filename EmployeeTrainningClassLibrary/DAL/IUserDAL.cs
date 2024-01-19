@@ -11,7 +11,9 @@ namespace EmployeeTrainningClassLibrary.DAL
 {
     public interface IUserDAL : IRetrieveUserForAuthenticationDAL
     {
-        bool IsEmployeeRegistered(User user);
-        bool CheckEmailExistance(string email);
+        Task<bool> CheckEmailExistanceAsync(string email);
+        Task <bool> CheckNICExistanceAsync(string nic);
+        Task <(bool, List<string>)> IsEmployeeRegisteredAsync(User user);
+        List<string> ListOfManagerName();
     }
 }

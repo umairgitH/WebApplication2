@@ -2,16 +2,19 @@
 @{
     Layout = null;
 }
-
-
+@model EmployeeTrainningClassLibrary.Models.User
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="~/Content/RegisterStyle2.css" />
+    <link rel="stylesheet" href="~/Content/RegisterStyle31.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <style>
         .errorMessage {
             display: none;
@@ -25,30 +28,74 @@
             <h1>Sign Up</h1>
             <form method="POST">
                 <div class="input-group">
-                    <div class="input-field">
-                        <label for="firstname">First Name</label>
-                        <input type="text" id="firstname" placeholder="FirstName" />
+                    <div class="column">
+                        <div class="input-field">
+                            <label for="firstname">First Name</label>
+                            <input type="text" id="firstname" placeholder="FirstName" />
+                            <div id="FirstNameError" class="errorMessage">@Html.ValidationMessageFor(model => model.FirstName)</div>
+                        </div>
                     </div>
-                    <div class="input-field">
-                        <label for="lastname">Last Name</label>
-                        <input type="text" id="lastname" placeholder="LastName" />
+
+                    <div class="column">
+                        <div class="input-field">
+                            <label for="lastname">Last Name</label>
+                            <input type="text" id="lastname" placeholder="LastName" />
+                            <div id="LastNameError" class="errorMessage">@Html.ValidationMessageFor(model => model.LastName)</div>
+                        </div>
                     </div>
-                    <div class="input-field">
-                        <label for="phone">Phone Number</label>
-                        <input type="text" id="phone" placeholder="Phone Number" />
+
+                    <div class="column">
+                        <div class="input-field">
+                            <label for="phone">Phone Number</label>
+                            <input type="text" id="phone" placeholder="Phone Number" />
+                            <div id="PhoneNumError" class="errorMessage">@Html.ValidationMessageFor(model => model.PhoneNum)</div>
+                        </div>
                     </div>
-                    <div class="input-field">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" placeholder="Email" />
+
+                    <div class="column">
+                        <div class="input-field">
+                            <label for="NIC">NIC</label>
+                            <input type="text" id="NIC" placeholder="NIC" />
+                            <div id="NICError" class="errorMessage">@Html.ValidationMessageFor(model => model.NIC)</div>
+                        </div>
                     </div>
-                    <div id="emailError" class="errorMessage"></div>
-                    <div class="input-field">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" placeholder="Password" />
+
+                    <div class="column">
+                        <div class="input-field">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" placeholder="Email" />
+                            <div id="EmailError" class="errorMessage">@Html.ValidationMessageFor(model => model.Email)</div>
+                        </div>
                     </div>
-                    <div class="input-field">
-                        <label for="managerName">Manager Name</label>
-                        <input type="text" id="managerName" placeholder="Manager Name" />
+
+                    <div class="column">
+                        <div class="input-field">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" placeholder="Password" class="password-input" onkeyup="validatePwd()" />
+                            <div class="password-checklist">
+                                <h3 class="checklist-title">Password should be</h3>
+                                <ul class="checklist">
+                                    <li class="list-item">At least 8 characters long</li>
+                                    <li class="list-item">At least 1 number</li>
+                                    <li class="list-item">At least 1 special character</li>
+                                </ul>
+                            </div>
+                            <div id="PasswordError" class="errorMessage">@Html.ValidationMessageFor(model => model.Password)</div>
+                        </div> 
+                    </div>
+
+                    <div class="column manager">
+                        <div class="input-field manager-input">
+                            <label for="managerName">Manager Name</label>
+                            <select id="managerName" required>
+                                <option value="" disabled selected>Select your Manager</option>
+                                @foreach(var item in ViewBag.managerName)
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            </select>
+                            <div id="ManagerError" class="errorMessage">@Html.ValidationMessageFor(model => model.ManagerName)</div>
+                        </div>
                     </div>
                     <div class="btn-field">
                         <input type="button" value="Sign up" onclick="registerUser()" />
@@ -60,45 +107,62 @@
 </body>
 </html>
 <script>
-
-</script>
-<script>
     function registerUser() {
-        const fname = document.getElementById('firstname').value
+        const fname = document.getElementById('firstname');
+        const lname = document.getElementById('lastname');
+        const PhoneNum = document.getElementById('phone');
+        const Email = document.getElementById('email');
+        const Password = document.getElementById('password');
+        const ManagerName = document.getElementById('managerName');
+        const NIC = document.getElementById('NIC');
         var user = {
-            firstName: document.getElementById('firstname').value,
-            LastName: document.getElementById('lastname').value,
-            PhoneNum: document.getElementById('phone').value,
-            Email: document.getElementById('email').value,
-            Password: document.getElementById('password').value,
-            ManagerName: document.getElementById('managerName').value,
+            FirstName: fname.value,
+            LastName: lname.value,
+            PhoneNum: PhoneNum.value,
+            Email: Email.value,
+            Password: Password.value,
+            ManagerName: ManagerName.value,
+            NIC: NIC.value,
         };
+        var isValid = validateRegisterForm();
+        if (!isValid) {
+            return;
+        }
         $.ajax({
             type: 'POST',
             url: '/Account/Register',
             data: user,
             success: function (result) {
-                console.log(result);
                 if (result.result == "Success") {
-                    console.log("Registering user...");
-                    window.location.href = '/Account/Login';
+                    toastr.success("Registered Successfully", "Success", { timeOut: 3000, positionClass: "toast-top-right", });
+                    setTimeout(function () {
+                        window.location.href = '/Account/Login';
+                    }, 4000);
+                    //window.location.href = '/Account/Login';
                 }
-                else {
-                    console.log("Registration Failed");
+                else if (result.result == "Registration failed") {
                     if (result.errors) {
                         result.errors.forEach(function (error) {
                             if (error == "emailNotUnique") {
-                                console.log("email should be unique");
-                                displayError('emailError', 'Email already taken! Enter a unique email.');
-                            }
+                                displayError('EmailError', 'Email already taken! Enter a unique email.');
+                            } else { document.getElementById('EmailError').style.display = "none"; }
+                            if (error == "NicNotUnique") {
+                                displayError('NICError', 'NIC already taken! Enter a unique NIC.');
+                            } else { document.getElementById('NICError').style.display = "none"; }
                         });
                     }
+                }
+                //server side validation message
+                else {
+                    Object.keys(result.errors).forEach(function (attributeName) {
+                        displayError(attributeName + "Error", result.errors[attributeName]);
+                    })
                 }
             },
             error: function (error) {
                 console.log(error);
             }
-        }); 
+        });
     }
     function displayError(elementId, errorMessage) {
         var errorElement = document.getElementById(elementId);
@@ -107,6 +171,101 @@
         errorElement.style.textAlign = "left";
         errorElement.style.paddingBottom = "15px";
         errorElement.innerHTML = errorMessage;
+    }
+    function validateRegisterForm() {
+        const fname = document.getElementById('firstname');
+        const lname = document.getElementById('lastname');
+        const PhoneNum = document.getElementById('phone');
+        const Email = document.getElementById('email');
+        const Password = document.getElementById('password');
+        const ManagerName = document.getElementById('managerName');
+        const NIC = document.getElementById('NIC');
+
+        var emailRegex =/^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        var phoneRegex = /^5[0-9]{7}$/;
+
+        var isValid = true;
+
+        if (fname.value == "") {
+            displayError("FirstNameError", "First Name is required");
+            isValid = false;
+        } else {
+            document.getElementById('FirstNameError').style.display = "none";
+        }
+
+        if (lname.value == "") {
+            displayError("LastNameError", "Last Name is required");
+            isValid = false;
+        } else {
+            document.getElementById('LastNameError').style.display = "none";
+        }
+
+        if (PhoneNum.value == "") {
+            displayError("PhoneNumError", "Phone Number is required");
+            isValid = false;
+        } else if (!phoneRegex.test(PhoneNum.value)) {
+            displayError("PhoneNumError", "Invalid Phone Number!<br>Example: 5(followed by 7 numbers)");
+            isValid = false;
+        }else {
+            document.getElementById('PhoneNumError').style.display = "none";
+        }
+        if (NIC.value == "") {
+            displayError("NICError", "NIC is required");
+            isValid = false;
+        } else {
+            document.getElementById('NICError').style.display = "none";
+        }
+        if (Email.value == "") {
+            displayError("EmailError", "Email is required");
+            isValid = false;
+        } else if(!emailRegex.test(Email.value)) {
+            displayError("EmailError", "Invalid Email address");
+            isValid = false;
+        } else {
+            document.getElementById('EmailError').style.display = "none";
+        }
+
+        if (Password.value == "") {
+            displayError("PasswordError", "Password is required");
+            isValid = false;
+        } else if (!validatePwd()) {
+            displayError("PasswordError", "Invalid Password! Not all conditions are satisfied");
+        } else {
+            document.getElementById('PasswordError').style.display = "none";
+        }
+
+        if (ManagerName.value == "") {
+            displayError("ManagerError", "Manager Name is required");
+            isValid = false;
+        } else {
+            document.getElementById('ManagerError').style.display = "none";
+        }
+
+        return isValid;
+    }
+</script>
+<script>
+    function validatePwd() {
+        let passwordInp = document.querySelector(".password-input");
+        let passwordChecklist = document.querySelectorAll(".list-item");
+        let validationRegex = [
+            { regex: /.{8,}/ },
+            { regex: /[0-9]/ },
+            { regex: /[^A-Za-z0-9]/ },
+        ];
+        function isPasswordValid() {
+            return validationRegex.every((item) => item.regex.test(passwordInp.value));
+        }
+        validationRegex.forEach((item, i) => {
+            let isValid = item.regex.test(passwordInp.value);
+            if (isValid) {
+                passwordChecklist[i].classList.add("checked");
+            } else {
+                passwordChecklist[i].classList.remove("checked");
+            }
+        });
+
+        return isPasswordValid();
     }
 </script>
 

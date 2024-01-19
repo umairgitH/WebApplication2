@@ -12,6 +12,6 @@ namespace EmployeeTrainningClassLibrary.DAL
 {
     public interface IRetrieveUserForAuthenticationDAL
     {
-        SqlDataReader RetrieveUser(User user);
+        Task <(bool isAuthenticated, int UserId, int RoleId)> RetrieveUserAsync(LoginModel user);
     }
 }

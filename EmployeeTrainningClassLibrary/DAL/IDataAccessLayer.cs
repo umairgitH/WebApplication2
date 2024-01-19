@@ -12,7 +12,7 @@ namespace EmployeeTrainningClassLibrary.DAL
     {
         string Connect();
         string Connect(string connectionString);
-        SqlDataReader GetData(string sql, List<SqlParameter> parameters);
+        Task <SqlDataReader> GetData(string sql, List<SqlParameter> parameters);
         SqlDataReader GetAllData(string sql);
         void ExecuteNonQueryData(string sql, List<SqlParameter> parameters);
         void ExecuteNonQueryUsingProcedures(string procedure, List<SqlParameter> parameters);

@@ -38,7 +38,7 @@ body {
     color: #3c00a0;
     position: relative;
 }
-
+/*creating underline effect*/
 .form-box h1::after {
     content: "";
     width: 30px;

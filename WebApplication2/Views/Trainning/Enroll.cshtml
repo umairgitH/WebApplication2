@@ -1,7 +1,6 @@
 ﻿
 @{
     Layout = null;
-    //@Model EmployeeTrainningClassLibrary.Model;
 }
 
 <!DOCTYPE html>
@@ -10,31 +9,86 @@
     <meta name="viewport" content="width=device-width" />
     <link rel="stylesheet" href="~/Content/EnrollStyle3.css" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <title>Enroll</title>
+    <style>
+        .errorMessage {
+            display: none;
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <div class="form-box">
             <h1>Enroll to Trainning</h1>
-            <form method="post" enctype="multipart/form-data" action="@Url.Action("Enroll","Trainning")">
+            <form id="enrollForm" method="post" enctype="multipart/form-data" action="@Url.Action("EnrollPost","Trainning")">
                 <div class="input-group">
 
                     <input type="hidden" id="TrainingId" name="TrainingId" value="@Model.TrainingId" />
                     <div class="input-field">
                         <label>TrainningId: @Model.TrainingId</label>
                         <label>Trainning Name: @Model.TrainingName</label>
+                        <label>Required Pre-requisute: @Model.PrerequisiteName</label>
                         <input type="file" id="requisite" name="file" placeholder="Pre-requisite" />
+                        <div id="fileError" class="errorMessage"></div>
                     </div>
                     <div class="btn-field">
                         <input type="button" class="back-button" value="Back" onclick="window.location.href='/Trainning/Trainning'" />
-                        <input type="submit" class="enroll-button" value="Upload" />
+                        <input type="button" class="enroll-button" value="Upload" onclick="uploadFile()"/>
                     </div>
-                </div>
-                <div class="message-status">
-                    <h2>@ViewBag.Message</h2>
                 </div>
             </form>
         </div>
     </div>
 </body>
 </html>
+<script>
+    function uploadFile() {
+        var formData = new FormData(document.getElementById("enrollForm"));
+        var fileInput = document.getElementById("requisite");
+        var errorElement = document.getElementById("fileError");
+        var allowed_fileType = new Array("jpg", "png", "pdf", "doc", "docx");
+        var fileName = fileInput.value;
+        var inputFileExtension = fileName.split('.').pop().toLowerCase();
+        var fileSize = (fileInput.files[0].size / 1024 / 1024);
+
+        if (document.getElementById("requisite").files.length == 0) {
+            errorElement.style.display = "flex";
+            errorElement.style.flexDirection = "column";
+            errorElement.style.textAlign = "left";
+            errorElement.innerHTML = "Pre-requisite is required";
+        }
+        else if (!allowed_fileType.includes(inputFileExtension)) {
+            toastr.warning("Invalid File Type", "Warning", { timeOut: 3000, positionClass: "toast-top-right", });
+        }
+        else if (fileSize > 4) {
+            toastr.warning("File size must be less that 4MB", "Warning", { timeOut: 3000, positionClass: "toast-top-right", });
+        }
+        else {
+            errorElement.style.display = "none";
+            $.ajax({
+                url: $("#enrollForm").attr("action"),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.result == "Success") {
+                        toastr.success("Enrolled Successfully", "Success", { timeOut: 3000, positionClass: "toast-top-right", });
+                        setTimeout(function () {
+                            window.location.href = '/Trainning/Trainning';
+                        }, 4000);
+                    } else {
+                        toastr.error("Enrolled Failed. Try Again later", "Error", { timeOut: 3000, positionClass: "toast-top-right", });
+                    }
+                },
+                error: function (error) {
+                }
+            });
+        }
+
+    }
+</script>

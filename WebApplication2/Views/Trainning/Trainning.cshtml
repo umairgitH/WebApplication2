@@ -9,12 +9,28 @@
     <meta name="viewport" content="width=device-width" />
     <link rel="stylesheet" href="~/Content/trainning.css" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <title>Trainning</title>
+    <style>
+        .alert {
+            padding: 20px;
+            background-color: #ff9800;
+            color: white;
+            display: none;
+            position: fixed;
+            border-radius: 5px;
+            top: 20%;
+            right: 10px;
+            transform: translate(0, -50%);
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <div class="User-container">
-            <img src="~/Content/logo.png" alt="logo" class="img-logo" />
+            <img src="~/Content/Images/logo.png" alt="logo" class="img-logo" />
             <h2 class="user-name">Welcome!<br />Enroll to your desired trainning</h2>
             <button class="log-out-button" onclick="window.location.href='/Account/LogOut'">Log Out</button>
         </div>
@@ -25,8 +41,8 @@
                 <div class="info-column">
                     <p class="name" data-value="@trainning.TrainingName">@trainning.TrainingName</p>
                     <p class="description">@trainning.Description</p>
+                    <p id="date" class="deadline" data-value="@trainning.Deadline" hidden>@trainning.Deadline</p>
                 </div>
-
                 <button class="enroll-button" name="@trainning.TrainingId">Enroll</button>
             </div>
         }
@@ -42,9 +58,67 @@
     }
     $(document).ready(function () {
         $('.enroll-button').on('click', function () {
-            var trainingId = $(this).attr('name');
-            var trainingName = $(this).closest('.Trainning-list').find('.name').data('value');
-            window.location.href = '@Url.Action("Enroll","Trainning")?trainingId=' + trainingId + '&trainningName=' + encodeStringURIComponent(trainingName);
+            var TrainingId = $(this).attr('name');
+            var TrainingName = $(this).closest('.Trainning-list').find('.name').data('value');
+            var deadlineElement = $(this).closest('.Trainning-list').find('.deadline').data('value');
+            var Deadline = new Date(deadlineElement).toISOString();
+            var currentDate = new Date().toISOString();
+            console.log("currentDate:", currentDate);
+            console.log("Deadline:", Deadline);
+            console.log("Comparison Result:", currentDate > Deadline);
+
+            if (currentDate > Deadline) {
+                toastr.error("Enrollment Deadline Exceeded!", "Oops", { timeOut: 5000, positionClass: "toast-bottom-right", });
+            }
+            else {
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("Trainning", "Trainning")',
+                    data: { trainingId: TrainingId, trainningName: TrainingName },
+                    success: function (data) {
+                        window.location.href = '@Url.Action("Enroll", "Trainning")';
+                    },
+                    error: function () {
+                    }
+                });
+            }
+
+
         });
     });
 </script>
+
+@*$(document).ready(function () {
+    $('.enroll-button').on('click', function () {
+        var deadlineElement = document.getElementById('date').textContent;
+        var deadlineDate = new Date(deadlineElement);
+        var alert = document.getElementById("myAlert");
+        const currentDate = new Date();
+        const specifiedDate = new Date();
+        specifiedDate.setSeconds(currentDate.getSeconds() + 7);
+        if (currentDate > specifiedDate) {
+            alert.style.display = "flex";
+            alert.style.justifyContent = "center";
+            setTimeout(function () {
+                alert.style.display = "none";
+            }, 5000);
+        } else {
+            alert.style.display = "none";
+            var trainingId = $(this).attr('name');
+            var trainingName = $(this).closest('.Trainning-list').find('.name').data('value');
+            window.location.href = '@Url.Action("Enroll","Trainning")?trainingId=' + trainingId + '&trainningName=' + encodeStringURIComponent(trainingName);
+        }
+
+
+    });
+});*@
+
+ @*$(document).ready(function () {
+     $('.enroll-button').on('click', function () {
+         var trainingId = $(this).attr('name');
+         var trainingName = $(this).closest('.Trainning-list').find('.name').data('value');
+         window.location.href = '@Url.Action("Enroll","Trainning")?trainingId=' + trainingId + '&trainningName=' + encodeStringURIComponent(trainingName);
+
+     });
+ });*@

@@ -4,6 +4,8 @@ using Unity.Injection;
 using Unity.Mvc5;
 using EmployeeTrainningClassLibrary.BusinessLayer;
 using EmployeeTrainningClassLibrary.DAL;
+using EmployeeTrainningClassLibrary.AppLoger;
+using EmployeeTrainningClassLibrary.SendNotification;
 
 namespace WebApplication2
 {
@@ -17,6 +19,7 @@ namespace WebApplication2
             // it is NOT necessary to register your controllers
 
             // e.g. container.RegisterType<ITestService, TestService>();
+            container.RegisterType<ILogger,Logger>();
             container.RegisterType<IDataAccessLayer, DataAccessLayer>();
             container.RegisterType<IRetrieveUserForAuthenticationDAL, RetrieveUserForAuthenticationDAL>();
             container.RegisterType<IUserDAL, UserDAL>();
@@ -25,6 +28,7 @@ namespace WebApplication2
             container.RegisterType<ITrainningDAL, TrainningDAL>();
             container.RegisterType<IEnrollmentDAL, EnrollmentDAL>();
             container.RegisterType<IEnrollmentService, EnrollmentService>();
+            container.RegisterType<ISendNotification, EmailNotification>();
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
         }
     }

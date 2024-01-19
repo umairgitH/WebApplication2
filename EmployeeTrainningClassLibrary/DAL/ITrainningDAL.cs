@@ -10,8 +10,11 @@ namespace EmployeeTrainningClassLibrary.DAL
 {
     public interface ITrainningDAL
     {
-        SqlDataReader DisplayTrainning(int userId);
+        Task <List<Trainning>> DisplayTrainningAsync(int userId);
         bool AddTraining(Trainning trainning);
-        bool UpdateTrainnig(Trainning trainning, string[] parameterToInclude);
+        bool UpdateTrainnig(Trainning trainning, string[] parameterToInclude, int trainningId);
+        List<Trainning> GetTrainningList();
+        Task <bool> DeleteTrainningAsync(int trainnigId);
+        List<string> GetAllTrainningName();
     }
 }

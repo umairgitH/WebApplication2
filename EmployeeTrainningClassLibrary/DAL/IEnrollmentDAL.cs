@@ -11,11 +11,16 @@ namespace EmployeeTrainningClassLibrary.DAL
 {
     public interface IEnrollmentDAL
     {
-        SqlDataReader GetEnrollment();
-        bool ApproveTrainning();
-        bool DeclineTrainning();
+        bool ApproveOrDeclineTrainning(int enrollmentId, string action);
         bool EnrollToTrainning(int trainningId, int userId, HttpPostedFileBase file);
-        List<FileStorage> GetFileData(int userId);
-        FileStorage GetFileDataToDownload(int fileId);
+        Task <(string recipientEmail, string managerName, string trainningName)> GetParameterToSendMailForEmployeeAsync(int userId, int trainningId);
+        Task <List<FileStorage>> GetFileDataAsync(int userId);
+        Task <FileStorage> GetFileDataToDownloadAsync(int fileId);
+        Task <bool> checkForSelectionDoneAsync(int trainningId);
+        Task <List<EnrollmentOfEmployee>> DisplayEnrollmentDetailsAsync(string trainningName, int managerId);
+        Task <string> GetPrerequisiteNameAsync(int trainningId);
+        Task <List<EnrollmentOfEmployee>> GetEmployeeEnrollmentAsync(int trainningId);
+        bool ProcessEmployeeEnrollment(int trainningId);
+        Task <(string EmployeeEmail, string UserName, string trainningName)> RetrieveParameterToSendMailAsync(int enrollmentId, string action);
     }
 }

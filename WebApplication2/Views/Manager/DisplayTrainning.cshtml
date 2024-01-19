@@ -1,0 +1,235 @@
+﻿
+@{
+    Layout = null;
+}
+@model List<EmployeeTrainningClassLibrary.Models.EnrollmentOfEmployee>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/Content/DisplayManagerStyle.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <title>Training Approval System</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-left">
+                <a href="#" id="approvalBtn">Approval</a>
+                <a href="#" id="pendingBtn">Pending</a>
+                <a href="#" id="rejectedBtn">Rejected</a>
+            </div>
+            <div class="nav-right">
+                <a href="/Manager/SelectTrainning" class="backBtn" style="background-color: #28a745; margin-right: 20px;">Back</a>
+                <a href="/Account/LogOut" class="logoutBtn">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div id="pendingContent" class="content">
+            @if (Model.Any(e => e.Status == "Pending"))
+            {
+                <h2>Pending Trainings</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>EnrollmentID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Employee Files</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var employeeEnrollment in Model)
+                        {
+                            if (employeeEnrollment.Status == "Pending")
+                            {
+                                <tr>
+                                    <td id="enrollId">@employeeEnrollment.EnrollementId</td>
+                                    <td>@employeeEnrollment.FirstName</td>
+                                    <td>@employeeEnrollment.LastName</td>
+                                    <td>
+                                        <form method="post" action="@Url.Action("Download", "Manager")">
+                                            <input type="hidden" name="fileId" value="@employeeEnrollment.FileId" />
+                                            <button type="submit" class="download-btn">View</button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <button id="approveBtn_@employeeEnrollment.EnrollementId" class="approveBtn" onclick="approveEnrollment(@employeeEnrollment.EnrollementId)">Approve</button>
+                                        <button id="rejectBtn_@employeeEnrollment.EnrollementId" class="rejectBtn" onclick="DeclineEnrollment(@employeeEnrollment.EnrollementId)">Reject</button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p style="text-align: center">No pending trainings available.</p>
+            }
+        </div>
+        <div id="rejectedContent" class="content">
+            @if (Model.Any(e => e.Status == "Inactive"))
+            {
+                <h2>Rejected Trainings</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>EnrollmentID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Employee Files</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var employeeEnrollment in Model)
+                        {
+                            if (employeeEnrollment.Status == "Inactive")
+                            {
+                                <tr>
+                                    <td>@employeeEnrollment.EnrollementId</td>
+                                    <td>@employeeEnrollment.FirstName</td>
+                                    <td>@employeeEnrollment.LastName</td>
+                                    <td>
+                                        <form method="post" action="@Url.Action("Download", "Manager")">
+                                            <input type="hidden" name="fileId" value="@employeeEnrollment.FileId" />
+                                            <button type="submit" class="download-btn">View</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p style="text-align: center">No Rejected trainings available.</p>
+            }
+
+        </div>
+        <div id="approvalContent" class="content">
+            @if (Model.Any(e => e.Status == "Active"))
+            {
+                <h2>Approved Trainings</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>EnrollmentID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Employee Files</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var employeeEnrollment in Model)
+                        {
+                            if (employeeEnrollment.Status == "Active")
+                            {
+                                <tr>
+                                    <td>@employeeEnrollment.EnrollementId</td>
+                                    <td>@employeeEnrollment.FirstName</td>
+                                    <td>@employeeEnrollment.LastName</td>
+                                    <td>
+                                        <form method="post" action="@Url.Action("Download", "Manager")">
+                                            <input type="hidden" name="fileId" value="@employeeEnrollment.FileId" />
+                                            <button type="submit" class="download-btn">View</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+
+
+                    </tbody>
+                </table>
+            }
+            else {<p style="text-align: center">No Approved trainings available.</p> }
+        </div>
+    </main>
+</body>
+</html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Display the pending content by default
+        showContent("pendingContent");
+    });
+    document.getElementById("approvalBtn").addEventListener("click", function () {
+        showContent("approvalContent");
+    });
+
+    document.getElementById("pendingBtn").addEventListener("click", function () {
+        showContent("pendingContent");
+    });
+
+    document.getElementById("rejectedBtn").addEventListener("click", function () {
+        showContent("rejectedContent");
+    });
+
+    function showContent(contentId) {
+        const contents = document.querySelectorAll(".content");
+        contents.forEach((content) => {
+            content.style.display = "none";
+        });
+
+        document.getElementById(contentId).style.display = "block";
+    }
+    function approveEnrollment(EnrollementId) {
+        var Action = "approve";
+        var approveBtn = document.getElementById(`approveBtn_${EnrollementId}`);
+        $.ajax({
+            type: 'POST',
+            url: '/Manager/ApproveODeclineEnrollment',
+            data: { enrollementId: EnrollementId, action: Action },
+            success: function (Response) {
+                if (Response.result == "Success") {
+                    toastr.success("Trainning has been approved", "Success", { timeOut: 3000, positionClass: "toast-bottom-right", });
+
+                    approveBtn.disabled = true;
+                    setTimeout(function () {
+                        approveBtn.style.backgroundColor = "#8dcc28";
+                        approveBtn.textContent = "Already Approved";
+
+                    }, 3000);
+
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+    function DeclineEnrollment(EnrollementId) {
+        var Action = "reject";
+        var rejectBtn = document.getElementById(`rejectBtn_${EnrollementId}`);
+        $.ajax({
+            type: 'POST',
+            url: '/Manager/ApproveODeclineEnrollment',
+            data: { enrollementId: EnrollementId, action: Action },
+            success: function (Response) {
+                if (Response.result == "Success") {
+                    toastr.success("Trainning has been declined", "Success", { timeOut: 3000, positionClass: "toast-bottom-right", });
+
+                    rejectBtn.disabled = true;
+                    setTimeout(function () {
+                        approveBtn.style.backgroundColor = "#8dcc28";
+                        approveBtn.textContent = "Already rejected";
+
+                    }, 3000);
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+</script>

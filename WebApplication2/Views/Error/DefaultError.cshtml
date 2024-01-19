@@ -1,0 +1,49 @@
+﻿
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Error</title>
+        <style>
+            * {
+                font-family: "Poppins", sans-serif;
+            }
+
+            .container {
+                display: flex;
+                margin-top: 20%;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .msg2 {
+                display: flex;
+                flex-direction: row;
+            }
+
+            button {
+                background-color: #007bff;
+                border-radius: 15px;
+                width: 400px;
+                color: #fff;
+                padding: 10px;
+                border: none;
+                cursor: pointer;
+                margin-top: 30px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Error</h1>
+            <div class="msg2">
+                <h2>An error ocurred while processing your request</h2>
+            </div>
+            <p>Please contact Your domain admin</p>
+            <button onclick="window.location.href = '/Account/Login'">Return to Login</button>
+        </div>
+    </body>
+</html>
+

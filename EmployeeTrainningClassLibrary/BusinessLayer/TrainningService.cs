@@ -16,35 +16,30 @@ namespace EmployeeTrainningClassLibrary.BusinessLayer
         {
             _trainningDAL = trainningDAL;
         }
-
         public bool AddTraining(Trainning trainning)
         {
             return _trainningDAL.AddTraining(trainning);
         }
-
-        public List<Trainning> DisplayTrainning(int userId)
+        public async Task <List<Trainning>> DisplayTrainningAsync(int userId)
         {
-            List<Trainning> employeeTrainningList = new List<Trainning>();
-            using (SqlDataReader reader = _trainningDAL.DisplayTrainning(userId))
-            {
-                while (reader.Read())
-                {
-                    Trainning trainning = new Trainning
-                    {
-                        TrainingId = Convert.ToInt16(reader["TrainingId"]),
-                        TrainingName = reader["TrainingName"].ToString(),
-                        Description = reader["Description"].ToString(),
-                        Capacity = Convert.ToInt32(reader["Capacity"])
-                    };
-                    employeeTrainningList.Add(trainning);
-                }               
-            }
-            return employeeTrainningList;
+            return await _trainningDAL.DisplayTrainningAsync(userId);
         }
-        //TODO
-        public bool UpdateTrainnig(Trainning trainning, string[] parameterToInclude)
+        public bool UpdateTrainnig(Trainning trainning, string[] parameterToInclude, int trainningId)
         {
-            return _trainningDAL.UpdateTrainnig(trainning, parameterToInclude);
+            return _trainningDAL.UpdateTrainnig(trainning, parameterToInclude, trainningId);
+        }
+        public List<Trainning> GetTrainningList()
+        {
+            return _trainningDAL.GetTrainningList();
+        }
+        public async Task <bool> DeleteTrainningAsync(int trainnigId)
+        {
+            return await _trainningDAL.DeleteTrainningAsync(trainnigId);
+        }
+
+        public List<string> GetAllTrainningName()
+        {
+            return _trainningDAL.GetAllTrainningName();
         }
     }
 }

@@ -1,0 +1,38 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/Content/SelectTrainning.css" />
+    <title>Select Role</title>
+</head>
+<body>
+    <div class="center-box">
+        <div class="dialogContainer" id="dayforce_Dialog_1">
+            <div class="dialogTitleContainer">
+                <h1 class="dialogTitle">Select Trainning</h1>
+            </div>
+            <form method="get" action="@Url.Action("DisplayTrainning","Manager")">
+                <div class="dialogContent">
+                    <div class="dropdown">
+                        <select id="roleSelect" name="trainningName">
+                            @foreach(var item in ViewBag.TrainningName)
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="buttonContainer">
+                    <button id="nextButton" type="submit">Next</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

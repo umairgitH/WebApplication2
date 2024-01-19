@@ -1,0 +1,257 @@
+﻿
+@{
+    Layout = null;
+}
+@model List<EmployeeTrainningClassLibrary.Models.Trainning>
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="~/Content/AdminStyle.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+    <title>AdminDashBoard</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-left">
+                <img src="~/Content/Images/logo.png" alt="Logo" class="logo-img" />
+                <h2>Manage Training</h2>
+            </div>
+            <div class="nav-right">
+                <a href="#" id="addTrainingBtn" class="add-training">Add new Trainning</a>
+                <a href="/Account/LogOut" class="logoutBtn">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="main">
+        <div id="pendingContent" class="content">
+            <h2>Training Details</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Trainning Name</th>
+                        <th>Description</th>
+                        <th>capacity</th>
+                        <th>Priority Department</th>
+                        <th>Deadline</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var trainning in Model)
+                    {
+                        <tr>
+                            <td style="width: 9%">@trainning.TrainingName</td>
+                            <td style="width: 40%">@trainning.Description</td>
+                            <td style="width: 7%"><p>@trainning.Capacity</p></td>
+                            <td style="width: 11%"> <p>@trainning.PriorityDepartment</p> </td>
+                            <td style="width: 9%" data-Deadline="@trainning.Deadline" id="deadline_@trainning.TrainingId">@trainning.Deadline</td>
+                            <td style="width: 30%;">
+                                <!--<button id="Edit-btn" class="approveBtn" data-TrainningId="@trainning.TrainingId" onclick="showEditDropdown(this)"> Edit</button>-->
+                                <button class="approveBtn" data-TrainningId="@trainning.TrainingId" onclick="showEditDropdown(this)"> Edit</button>
+                                <div id="edit-list" class="edit-dropdown" style="display: none">
+                                    <select id="editAttributeDropdown" onchange="handleEditDropdownChange(this)">
+                                        <option value="TrainingName">Training Name</option>
+                                        <option value="Description">Description</option>
+                                        <option value="Capacity">Capacity</option>
+                                        <option value="PriorityDepartment">Priority Department </option>
+                                        <option value="Deadline">Deadline</option>
+                                    </select>
+                                </div>
+                                <button class="deleteBtn" data-TrainningId="@trainning.TrainingId" onclick="DeleteTrainning(this)"> Delete</button>
+                                <button class="processEnrollmentBtn" data-TrainningId="@trainning.TrainingId" onclick="ProcessEnrollmnet(this)"> Process Enrollment</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="addTrainingModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('addTrainingModal')">&times;</span>
+            <h2>Add New Training</h2>
+            <form id="addTrainingForm">
+                <label for="trainingName">Training Name:</label>
+                <input type="text" id="trainingName" name="trainingName" />
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" rows="5" cols="5"></textarea>
+                <label for="Capacity">Capacity:</label>
+                <input type="number" id="trainningCapacity" name="Capacity" />
+                <label for="PriorityDepartment">PriorityDepartment:</label>
+                <input type="text" id="priorityDept" name="PriorityDepartment" />
+                <label for="Deadline">Deadline:</label>
+                <input type="date" id="deadline" />
+                <label for="Pre-requisite">Required pre-requisite: </label>
+                <input type="text" id="Pre-requisite" />
+            </form>
+                <button id="addButton" onclick="AddNewTrainning()">Add Training</button>
+        </div>
+    </div>
+    <div id="editTrainingModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('editTrainingModal')">&times;</span>
+            <h2>Edit Training</h2>
+            <form id="editTrainingForm">
+                <label for="editedAttributeValue">New Value:</label>
+                <textarea id="editedAttributeValue" name="editedAttributeValue" rows="5" cols="5"></textarea>
+            </form>
+            <button onclick="saveEditedAttribute()">Save</button>
+            <button style="margin-top: 10px" onclick="closeModal('editTrainingModal')">Cancel</button>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    //For ADD Trainning Logic
+    document
+        .getElementById("addTrainingBtn")
+        .addEventListener("click", function () {
+            openModal("addTrainingModal");
+        });
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.style.display = "block";
+    }
+    function closeModal(ModalId) {
+        document.getElementById(ModalId).style.display = "none";
+    }
+    function AddNewTrainning() {
+        var trainning = {
+            TrainingName: document.getElementById('trainingName').value,
+            Description: document.getElementById('description').value,
+            Capacity: document.getElementById('trainningCapacity').value,
+            PriorityDepartment: document.getElementById('priorityDept').value,
+            Deadline: new Date($('#deadline').val()).toISOString(),
+            PrerequisiteName: document.getElementById('Pre-requisite').value
+        }
+        $.ajax({
+            url: '/Admin/AddTrainning',
+            type: "POST",
+            data: JSON.stringify(trainning),
+            contentType: "application/json; charset=utf-8",
+        }).done(function (response) {
+
+            if (response.result == "Success") {
+                toastr.success(" ", "Trainning added successfully", { timeOut: 3000, positionClass: "toast-bottom-right", });
+                setTimeout(function () {
+                    window.location.href = '/Admin/AdminDashBoard'
+                }, 4000);
+            }
+
+        }).fail(function () {
+
+
+        });
+
+    }
+    //For EDIT Trainning Logic
+    let trainningId = "";
+    function showEditDropdown(button) {
+        trainningId = button.getAttribute('data-TrainningId');
+        const dropdown = button.nextElementSibling;
+        dropdown.style.display =
+            dropdown.style.display === "none" ? "block" : "none";
+    }
+
+    let editedAttribute = "";
+    function handleEditDropdownChange(select) {
+        editedAttribute = select.value;
+        openEditModal();
+    }
+    function openEditModal() {
+        document.getElementById(
+            "editedAttributeValue"
+        ).placeholder = `Enter new ${editedAttribute}`;
+        openModal("editTrainingModal");
+    }
+    function saveEditedAttribute() {
+        var updatedAttribute = editedAttribute;
+        var editedAttributeValue = document.getElementById("editedAttributeValue").value;
+        console.log(editedAttributeValue);
+        var Trainning = {};
+        Trainning[updatedAttribute] = editedAttributeValue;
+
+        $.ajax({
+            url: '/Admin/UpdateTrainning',
+            type: "POST",
+            data: JSON.stringify({ attributeName: updatedAttribute, trainning: Trainning, TrainningId: trainningId }),
+            contentType: "application/json; charset=utf-8",
+        }).done(function (response) {
+
+            if (response.result == "Success") {
+                toastr.success(" ", "Trainning Updated successfully", { timeOut: 2000, positionClass: "toast-bottom-right", });
+                setTimeout(function () {
+                    window.location.href = '/Admin/AdminDashBoard'
+                }, 2500);
+            }
+
+        }).fail(function () {
+
+
+        });
+        closeModal("editTrainingModal");
+    }
+
+    //For DELETE Trainning Logic
+    function DeleteTrainning(button){
+        var TrainningId = button.getAttribute('data-TrainningId');
+        $.ajax({
+            url: '/Admin/DeleteTrainning',
+            type: "POST",
+            data: JSON.stringify( { trainningId: TrainningId }),
+            contentType: "application/json; charset=utf-8",
+        }).done(function (response) {
+
+            if (response.result == "Success") {
+                toastr.success("Trainning deleted successfully", "Success", { timeOut: 3000, positionClass: "toast-bottom-right", });
+                setTimeout(function () {
+                    window.location.href = '/Admin/AdminDashBoard'
+                }, 4000);
+            } else {
+                toastr.error("Trainning cannot be deleted ", "Error", { timeOut: 5000, positionClass: "toast-bottom-right", });
+            }
+
+        }).fail(function () {
+
+
+        });
+    }
+
+    //to move to process enrollment page 
+    function ProcessEnrollmnet(button) {
+        var trainningId = button.getAttribute('data-TrainningId');
+        var deadlineElement = document.getElementById('deadline_' + trainningId);
+        var deadline = deadlineElement.getAttribute('data-Deadline');
+        var deadlineValue = new Date(deadline).toISOString();
+        currentDate = new Date().toISOString();
+        if (deadlineValue > currentDate) {
+            toastr.warning("The Deadline have not yet reached! The Deadline is on: " + deadline, "Warning", { timeOut: 3000, positionClass: "toast-bottom-right", });
+            
+        } else {
+            $.ajax({
+                type: 'GET',
+                url: '/Admin/DisplayEnrollment?trainningId=' + trainningId,
+                success: function (response) {
+                    if (response.result === "Already done") {
+                        toastr.warning("Enrollment selection is already done", "Warning", { timeOut: 3000, positionClass: "toast-bottom-right" });
+                    } else {
+                        window.location.href = '/Admin/DisplayEnrollment?trainningId=' + trainningId;
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+    }
+</script>
+

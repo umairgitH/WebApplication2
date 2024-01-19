@@ -1,0 +1,47 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Error</title>
+    <style>
+      * {
+        font-family: "Poppins", sans-serif;
+      }
+      .container {
+        display: flex;
+        margin-top: 20%;
+        flex-direction: column;
+        align-items: center;
+      }
+      .msg2 {
+        display: flex;
+        flex-direction: row;
+      }
+      button {
+        background-color: #007bff;
+        border-radius: 15px;
+        width: 400px;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        margin-top: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Oops</h1>
+      <div class="msg2">
+        <h2>Error! Page not found</h2>
+      </div>
+      <p>Status Code: 404</p>
+      <p>Please contact Your domain admin</p>
+      <button onclick="window.location.href = '/Account/Login'">Return to Login</button>
+    </div>
+  </body>
+</html>

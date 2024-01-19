@@ -12,11 +12,14 @@ namespace EmployeeTrainningClassLibrary.BusinessLayer
 {
     public interface IEnrollmentService
     {
-        bool IsEmployeeEnrolled(int trainningId, int userId, HttpPostedFileBase file);
-        SqlDataReader GetEnrollment();
-        bool ApproveTrainning();
-        bool DeclineTrainning();
-        List<FileStorage> GetFileData(int userId);
-        FileStorage GetFileDataToDownload(int fileId);
+        Task <List<FileStorage>> GetFileDataAsync(int userId);
+        Task <FileStorage> GetFileDataToDownloadAsync(int fileId);
+        Task<bool> checkForSelectionDoneAsync(int trainningId);
+        Task <List<EnrollmentOfEmployee>> DiplayEnrollmentDetailsAsync(string trainningName, int managerId);
+        Task <string> GetPrerequisiteNameAsync(int trainningId);
+        Task <List<EnrollmentOfEmployee>> GetEmployeeEnrollmentAsync(int trainningId);
+        bool ProcessEmployeeEnrollment(int trainningId);
+        Task <bool> ApproveOrDeclineTrainningAsync(int enrollemntId, string action);
+        Task<bool> IsEmployeeEnrolledAsync(int trainningId, int userId, HttpPostedFileBase file);
     }
 }

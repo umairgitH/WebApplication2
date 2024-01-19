@@ -10,9 +10,11 @@ using System.Web;
 using System.Web.Mvc;
 using WebApplication2.Roles;
 using System.Drawing.Imaging;
+using WebApplication2.SessionManagement;
 
 namespace WebApplication2.Controllers
 {
+    [SessionTimeOut]
     public class TrainningController : Controller
     {
         private readonly ITrainningService _trainingService;
@@ -23,7 +25,7 @@ namespace WebApplication2.Controllers
         }
         [HttpGet]
         [CustomAuthorization("Employee")]
-        public ActionResult Trainning()
+        public async Task <ActionResult> Trainning()
         {
             int userId = (int)Session["UserId"];
             if(Session["UserId"] == null)
@@ -32,81 +34,45 @@ namespace WebApplication2.Controllers
             }
             else
             {
-                List<Trainning> trainningList = _trainingService.DisplayTrainning(userId);
+                List<Trainning> trainningList = await _trainingService.DisplayTrainningAsync(userId);
                 return View(trainningList);
             }
         }
-        public ActionResult Enroll(int trainingId, string trainningName)
+        [HttpPost]
+        public ActionResult Trainning(int trainingId, string trainningName)
         {
+            Session["trainningId"] = trainingId;
+            Session["TrainningName"] = trainningName;
 
+            return Json(new { success = true });
+        }
+        [HttpGet]
+        public async Task <ActionResult> Enroll()
+        {
+            int trainingId = (int)Session["trainningId"];
+            string trainningName = Session["TrainningName"].ToString();
+            string prerequisiteName = await _enrollmentService.GetPrerequisiteNameAsync(trainingId);
             var trainningModel = new Trainning()
             {
                 TrainingId = trainingId,
-                TrainingName = DecodeTrainningName(trainningName)
+                TrainingName = trainningName,
+                PrerequisiteName = prerequisiteName
             };
             return View(trainningModel);
         }
         [HttpPost]
-        public async Task<ActionResult> Enroll(HttpPostedFileBase file) {
+        public async Task <ActionResult> EnrollPost(HttpPostedFileBase file) {
             int trainingId = int.Parse(Request.Form["TrainingId"]);
             int userId = (int)Session["UserId"];
-
-            bool IsEnrolled = _enrollmentService.IsEmployeeEnrolled(trainingId, userId, file);
+            bool IsEnrolled = await _enrollmentService.IsEmployeeEnrolledAsync(trainingId, userId, file);
             if (IsEnrolled)
             {
-                ViewBag.Message = $"Your application has been successfully submitted.";
-                await Task.Delay(3000);
-                //return RedirectToAction("Trainning", "Trainning");
-                return RedirectToAction("DiplayFileList", "Trainning");
+                return Json(new { result = "Success" }, JsonRequestBehavior.AllowGet);
             }
             else
             {
-                ViewBag.Message = $"Error in submitting your application";
-                await Task.Delay(3000);
-                return RedirectToAction("Index", "Home");
+                return Json(new { result = "Enrollment Failed" }, JsonRequestBehavior.AllowGet);
             }
-        }
-        public ActionResult DiplayFileList()
-        {
-            int userId = (int)Session["UserId"];
-            var fileList = _enrollmentService.GetFileData(userId);
-
-            if (fileList != null && fileList.Any())
-            {
-                return View(fileList);
-            }
-            else
-            {
-                return HttpNotFound();
-            }
-        }
-        [HttpGet]
-        public ActionResult Download(int fileId)
-        {
-            FileStorage file = _enrollmentService.GetFileDataToDownload(fileId);
-
-            if (file != null)
-            {
-                return File(file.Data, file.ContentType, file.FileName);
-            }
-
-            return HttpNotFound();
-        }
-        static string DecodeTrainningName(string encodedString)
-        {
-            var regex = new Regex("..");
-
-            var matches = regex.Matches(encodedString);
-
-            var decodedString = new StringBuilder();
-            foreach (Match match in matches)
-            {
-                string hexValue = match.Value;
-                int charCode = Convert.ToInt32(hexValue, 16);
-                decodedString.Append((char)charCode);
-            }
-
-            return decodedString.ToString();
         }
     }
 }

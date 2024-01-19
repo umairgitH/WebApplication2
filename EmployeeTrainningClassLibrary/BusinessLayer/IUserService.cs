@@ -11,9 +11,8 @@ namespace EmployeeTrainningClassLibrary.BusinessLayer
 {
     public interface IUserService
     {
-        bool IsEmployeeRegistered(User user);
-        (bool isAuthenticated, int UserId, int RoleId) IsUserExists(User user);
-        bool IsEmailUnique(string email);
-
+        Task <(bool isAuthenticated, int UserId, int RoleId)> IsUserExistsAsync(LoginModel user);
+        Task <(bool, List<string>)> IsEmployeeRegisteredAsync(User user);
+        List<string> ListOfManagerName();
     }
 }
